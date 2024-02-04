@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class MainController {
+public class MainController extends AbstractController {
 
     @FXML
     private Button loginBtn;
@@ -21,8 +21,8 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        this.loginBtn.setOnAction(actionEvent -> {
-            System.out.println("Login btn 123");
+        this.registerBtn.setOnAction(actionEvent -> {
+            this.showWindow(this.registerBtn, "register.fxml");
         });
     }
 }

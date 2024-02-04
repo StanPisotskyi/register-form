@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: javafx-db
+    image: mysql:latest
+    volumes:
+      - javafx:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123123
+      MYSQL_DATABASE: javafx
+  pma:
+    container_name: javafx-pma
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+volumes:
+  javafx:

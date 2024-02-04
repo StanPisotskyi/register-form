@@ -6,8 +6,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class RegisterController {
+public class RegisterController extends AbstractController {
 
+    public Button backBtn;
     @FXML
     private TextField countryInput;
 
@@ -32,4 +33,9 @@ public class RegisterController {
     @FXML
     private Button registerBtn;
 
+    public void initialize() {
+        this.backBtn.setOnAction(actionEvent -> {
+            this.showWindow(this.registerBtn, "app.fxml");
+        });
+    }
 }
