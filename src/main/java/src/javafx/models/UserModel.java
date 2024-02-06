@@ -3,6 +3,7 @@ package src.javafx.models;
 import src.javafx.db.Mysql;
 import src.javafx.db.MysqlFactory;
 import src.javafx.entities.User;
+import src.javafx.entities.UserFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -43,6 +44,6 @@ public class UserModel {
             System.out.println(e.getMessage());
         }
 
-        return new User();
+        return UserFactory.create(0, name, lastName, login, country, language);
     }
 }

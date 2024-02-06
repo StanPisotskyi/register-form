@@ -5,6 +5,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import src.javafx.entities.User;
+import src.javafx.models.UserModel;
+
+import java.sql.SQLException;
 
 public class RegisterController extends AbstractController {
 
@@ -19,7 +23,7 @@ public class RegisterController extends AbstractController {
     private TextField languageInput;
 
     @FXML
-    private TextField latNameInput;
+    private TextField lastNameInput;
 
     @FXML
     private TextField loginInput;
@@ -33,9 +37,28 @@ public class RegisterController extends AbstractController {
     @FXML
     private Button registerBtn;
 
+    private final UserModel userModel = new UserModel();
+
     public void initialize() {
         this.backBtn.setOnAction(actionEvent -> {
             this.showWindow(this.registerBtn, "app.fxml");
+        });
+
+        this.registerBtn.setOnAction(actionEvent -> {
+            if (this.isConfirmed.isSelected()) {
+                String name = this.nameInput.getText();
+                String lastName = this.lastNameInput.getText();
+                String login = this.loginInput.getText();
+                String password = this.passwordInput.getText();
+                String country = this.countryInput.getText();
+                String language = this.languageInput.getText();
+
+                try {
+                    User user = this.userModel.register(name, lastName, login, password, country, language);
+                } catch (SQLException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         });
     }
 }
