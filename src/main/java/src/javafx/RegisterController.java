@@ -46,7 +46,7 @@ public class RegisterController extends AbstractController {
         });
 
         this.registerBtn.setOnAction(actionEvent -> {
-            if (this.isConfirmed.isSelected()) {
+            if (this.isValid() && this.isConfirmed.isSelected()) {
                 String name = this.nameInput.getText();
                 String lastName = this.lastNameInput.getText();
                 String login = this.loginInput.getText();
@@ -61,5 +61,10 @@ public class RegisterController extends AbstractController {
                 }
             }
         });
+    }
+
+    private boolean isValid() {
+        return !this.nameInput.getText().isEmpty() && !this.lastNameInput.getText().isEmpty()
+                && !this.loginInput.getText().isEmpty() && !this.passwordInput.getText().isEmpty();
     }
 }
