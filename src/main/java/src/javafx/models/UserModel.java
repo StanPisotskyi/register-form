@@ -6,10 +6,12 @@ import src.javafx.entities.User;
 import src.javafx.entities.UserFactory;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserModel {
     public static final String TABLE = "users";
+    public static final String FIELD_ID = "id";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_LAST_NAME = "last_name";
     public static final String FIELD_LOGIN = "login";
@@ -44,6 +46,38 @@ public class UserModel {
             System.out.println(e.getMessage());
         }
 
-        return UserFactory.create(0, name, lastName, login, country, language);
+        return this.findOneByLogin(login);
+    }
+
+    public User findOneByLogin(String login) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT " + UserModel.FIELD_ID + "," + UserModel.FIELD_NAME + "," + UserModel.FIELD_LAST_NAME
+                + "," + UserModel.FIELD_LOGIN + "," + UserModel.FIELD_COUNTRY + "," + UserModel.FIELD_LANGUAGE
+                + " FROM " + UserModel.TABLE + " WHERE " + UserModel.FIELD_LOGIN + " = ? LIMIT 1";
+
+        Mysql mysql = MysqlFactory.create();
+
+        try {
+            PreparedStatement statement = mysql.getConnection().prepareStatement(sql);
+
+            statement.setString(1, login);
+
+            ResultSet res = statement.executeQuery();
+
+            while (res.next()) {
+                int id = res.getInt("id");
+                String name = res.getString("name");
+                String lastName = res.getString("last_name");
+                String country = res.getString("country");
+                String language = res.getString("language");
+
+                return UserFactory.create(id, name, lastName, login, country, language);
+            }
+
+            return null;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 }
