@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import src.javafx.entities.User;
+import src.javafx.helpers.HashHelper;
 import src.javafx.models.UserModel;
 
 import java.sql.SQLException;
@@ -49,7 +50,7 @@ public class RegisterController extends AbstractController {
                 String name = this.nameInput.getText();
                 String lastName = this.lastNameInput.getText();
                 String login = this.loginInput.getText();
-                String password = this.passwordInput.getText();
+                String password = HashHelper.generate(this.passwordInput.getText());
                 String country = this.countryInput.getText();
                 String language = this.languageInput.getText();
 
