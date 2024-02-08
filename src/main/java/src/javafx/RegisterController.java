@@ -1,5 +1,6 @@
 package src.javafx;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -10,6 +11,8 @@ import src.javafx.helpers.HashHelper;
 import src.javafx.models.UserModel;
 
 import java.sql.SQLException;
+
+import com.fasterxml.jackson.databind.*;
 
 public class RegisterController extends AbstractController {
 
@@ -46,17 +49,21 @@ public class RegisterController extends AbstractController {
         });
 
         this.registerBtn.setOnAction(actionEvent -> {
-            if (this.isValid() && this.isConfirmed.isSelected()) {
-                String name = this.nameInput.getText();
-                String lastName = this.lastNameInput.getText();
-                String login = this.loginInput.getText();
-                String password = HashHelper.generate(this.passwordInput.getText());
-                String country = this.countryInput.getText();
-                String language = this.languageInput.getText();
+            String name = this.nameInput.getText();
+            String lastName = this.lastNameInput.getText();
+            String login = this.loginInput.getText();
+            String password = HashHelper.generate(this.passwordInput.getText());
+            String country = this.countryInput.getText();
+            String language = this.languageInput.getText();
 
+            if (this.isValid() && this.isConfirmed.isSelected() && !this.userExists(login)) {
                 try {
                     User user = this.userModel.register(name, lastName, login, password, country, language);
-                } catch (SQLException | ClassNotFoundException e) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String json = objectMapper.writeValueAsString(user);
+
+                    this.showWindow(this.registerBtn, "profile.fxml");
+                } catch (SQLException | ClassNotFoundException | JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -66,5 +73,16 @@ public class RegisterController extends AbstractController {
     private boolean isValid() {
         return !this.nameInput.getText().isEmpty() && !this.lastNameInput.getText().isEmpty()
                 && !this.loginInput.getText().isEmpty() && !this.passwordInput.getText().isEmpty();
+    }
+
+    private boolean userExists(String login) {
+        try {
+            User user = userModel.findOneByLogin(login);
+
+            return user != null;
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            return true;
+        }
     }
 }
