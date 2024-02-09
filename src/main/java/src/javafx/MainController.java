@@ -1,11 +1,17 @@
 package src.javafx;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import src.javafx.datatransfer.Storage;
 import src.javafx.entities.User;
+import src.javafx.helpers.HashHelper;
 import src.javafx.models.UserModel;
+
+import java.sql.SQLException;
 
 public class MainController extends AbstractController {
 
@@ -34,7 +40,19 @@ public class MainController extends AbstractController {
             String passwordInput = this.passwordInput.getText().trim();
 
             if (!loginInput.isEmpty() && !passwordInput.isEmpty()) {
-                User user = this.userModel.login(loginInput, passwordInput);
+                try {
+                    User user = this.userModel.findOneByLoginAndPassword(loginInput, HashHelper.generate(passwordInput));
+
+                    if (user != null) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String json = objectMapper.writeValueAsString(user);
+                        Storage.create("test").add("userData", json);
+
+                        this.showWindow(this.registerBtn, "profile.fxml");
+                    }
+                } catch (SQLException | ClassNotFoundException | JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

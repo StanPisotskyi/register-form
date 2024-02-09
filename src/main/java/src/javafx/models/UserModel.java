@@ -19,10 +19,6 @@ public class UserModel {
     public static final String FIELD_COUNTRY = "country";
     public static final String FIELD_LANGUAGE = "language";
 
-    public User login (String login, String password) {
-        return new User();
-    }
-
     public User register(String name, String lastName, String login, String password, String country, String language) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO " + UserModel.TABLE + "(" + UserModel.FIELD_NAME + ","
                 + UserModel.FIELD_LAST_NAME + "," + UserModel.FIELD_LOGIN + ","
@@ -60,6 +56,39 @@ public class UserModel {
             PreparedStatement statement = mysql.getConnection().prepareStatement(sql);
 
             statement.setString(1, login);
+
+            ResultSet res = statement.executeQuery();
+
+            while (res.next()) {
+                int id = res.getInt("id");
+                String name = res.getString("name");
+                String lastName = res.getString("last_name");
+                String country = res.getString("country");
+                String language = res.getString("language");
+
+                return UserFactory.create(id, name, lastName, login, country, language);
+            }
+
+            return null;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    public User findOneByLoginAndPassword(String login, String password) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT " + UserModel.FIELD_ID + "," + UserModel.FIELD_NAME + "," + UserModel.FIELD_LAST_NAME
+                + "," + UserModel.FIELD_LOGIN + "," + UserModel.FIELD_COUNTRY + "," + UserModel.FIELD_LANGUAGE
+                + " FROM " + UserModel.TABLE + " WHERE " + UserModel.FIELD_LOGIN + " = ? AND " + UserModel.FIELD_PASSWORD + " = ? LIMIT 1";
+
+        Mysql mysql = MysqlFactory.create();
+
+        try {
+            PreparedStatement statement = mysql.getConnection().prepareStatement(sql);
+
+            statement.setString(1, login);
+            statement.setString(2, password);
 
             ResultSet res = statement.executeQuery();
 
