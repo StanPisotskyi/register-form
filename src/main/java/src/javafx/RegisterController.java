@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import src.javafx.datatransfer.Storage;
 import src.javafx.entities.User;
 import src.javafx.helpers.HashHelper;
 import src.javafx.models.UserModel;
@@ -61,6 +62,7 @@ public class RegisterController extends AbstractController {
                     User user = this.userModel.register(name, lastName, login, password, country, language);
                     ObjectMapper objectMapper = new ObjectMapper();
                     String json = objectMapper.writeValueAsString(user);
+                    Storage.create("test").add("userData", json);
 
                     this.showWindow(this.registerBtn, "profile.fxml");
                 } catch (SQLException | ClassNotFoundException | JsonProcessingException e) {
